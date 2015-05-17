@@ -2,6 +2,8 @@
 
 from __future__ import absolute_import, unicode_literals, division
 import os
+import subprocess
+import tempfile
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
 
@@ -67,11 +69,13 @@ class FakeImg():
 
     @property
     def raw(self):
-        """Create the image on memory and return it"""
-        img_io = BytesIO()
-        self.pil_image.save(img_io, 'PNG')
-        img_io.seek(0)
-        return img_io
+        """Save the image, optimise and then return it"""
+        f = tempfile.NamedTemporaryFile(delete=False)
+        self.pil_image.save(f.name, format='PNG')
+        subprocess.call(['optipng', f.name])
+        image_data = open(f.name)
+        f.close()
+        return image_data
 
     def _calculate_font_size(self):
         min_side = min(self.width, self.height)
