@@ -70,7 +70,7 @@ class FakeImg():
     @property
     def raw(self):
         """Save the image, optimise and then return it"""
-        f = tempfile.NamedTemporaryFile(delete=False)
+        f = tempfile.NamedTemporaryFile()
         self.pil_image.save(f.name, format='PNG')
         subprocess.call(['optipng', f.name])
         image_data = open(f.name)
