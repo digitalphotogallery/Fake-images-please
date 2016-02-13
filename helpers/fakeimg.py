@@ -59,7 +59,11 @@ class FakeImg():
         self.font_name = font_name or "yanone"
         try:
             if int(font_size) > 0:
-                self.font_size = int(font_size)
+                if retina:
+                    # scaling font at retina display
+                    self.font_size = 2 * int(font_size)
+                else:
+                    self.font_size = int(font_size)
             else:
                 raise ValueError
         except (ValueError, TypeError):
@@ -119,9 +123,10 @@ class FakeImg():
         # Draw on the image
         draw = ImageDraw.Draw(image)
 
-        text_width, text_height = self.font.getsize(self.text)
+        (_, y_offset) = self.font.getoffset(self.text)
+        text_width, text_height = draw.textsize(self.text, font=self.font)
         text_coord = ((self.width - text_width) / 2,
-                      (self.height - text_height) / 2)
+                      (self.height - text_height - y_offset) / 2)
 
         rgba_foreground = self._hex_alpha_to_rgba(self.foreground_color,
                                                   self.alpha_foreground)
