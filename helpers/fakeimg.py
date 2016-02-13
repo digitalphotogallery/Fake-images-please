@@ -77,7 +77,7 @@ class FakeImg():
         f = tempfile.NamedTemporaryFile()
         self.pil_image.save(f.name, format='PNG')
         subprocess.call(['optipng', f.name])
-        image_data = open(f.name)
+        image_data = open(f.name, 'rb')
         f.close()
         return image_data
 
